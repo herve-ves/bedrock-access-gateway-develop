@@ -222,7 +222,13 @@ class BedrockModel(BaseChatModel):
         # convert OpenAI chat request to Bedrock SDK request
         args = self._parse_request(chat_request)
         if DEBUG:
-            logger.info("Bedrock request: " + json.dumps(args))
+            def bytes_to_base64(obj):
+                if isinstance(obj, bytes):
+                    return base64.b64encode(obj).decode("utf-8")
+                raise TypeError(
+                    f"Object of type {obj.__class__.__name__} is not JSON serializable"
+                )
+            logger.info("Bedrock request: " + json.dumps(args, default=bytes_to_base64))
 
         try:
             if stream:
